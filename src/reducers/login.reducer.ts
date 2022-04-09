@@ -4,6 +4,7 @@ import {
   LOGIN_FAILED,
   LOGIN_FETCHING,
   LOGIN_SUCCESS,
+  LOGOUT,
 } from "../Constants";
 
 export interface LoginState {
@@ -28,7 +29,10 @@ export default (
       return { ...state, isFetching: false, isError: false, result: payload };
     case LOGIN_FAILED:
       return { ...state, isFetching: false, isError: true, result: null };
-    default:
+    case LOGOUT:
+      return initialState;
+
+      default:
       return state;
   }
 };
