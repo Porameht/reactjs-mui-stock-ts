@@ -21,9 +21,9 @@ import {
 } from "@mui/material";
 import NumberFormat from "react-number-format";
 import Moment from "react-moment";
-
 import { Add, Clear, Search } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { useDebounce, useDebounceCallback } from "@react-hook/debounce";
 
 const stockColumns: GridColDef[] = [
   {
@@ -182,6 +182,13 @@ function QuickSearchToolbar(props: QuickSearchToolbarProps) {
 export default function StockPage() {
   const stockReducer = useSelector((state: RootReducers) => state.stockReducer);
   const dispatch = useDispatch();
+  const [keywordSearch, setKeywordSearch] = useDebounce<string>("", 1000);
+  const [keywordSearchNoDelay, setKeywordSearchNoDelay] =
+    React.useState<string>("");
+
+  React.useEffect(() => {
+    dispatch(stockActions.loadStockByKeyword(keywordSearch));
+  }, [keywordSearch]);
 
   React.useEffect(() => {
     dispatch(stockActions.loadStock());
@@ -191,6 +198,19 @@ export default function StockPage() {
     <Box>
       <DataGrid
         components={{ Toolbar: QuickSearchToolbar }}
+        componentsProps={{
+          toolbar: {
+            value: keywordSearchNoDelay,
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+              setKeywordSearch(e.target.value);
+              setKeywordSearchNoDelay(e.target.value);
+            },
+            clearSearch: () => {
+              setKeywordSearch("");
+              setKeywordSearchNoDelay("");
+            },
+          },
+        }}
         sx={{ backgroundColor: "white", height: "70vh" }}
         rows={stockReducer.result}
         columns={stockColumns}
