@@ -1,7 +1,5 @@
 {
-    "editor.formatOnSave": true,
-    "explorer.compactFolders": false,
-
+  "editor.formatOnSave": true,
+  "explorer.compactFolders": false,
+  "liveServer.settings.port": 5501
 }
-
-
