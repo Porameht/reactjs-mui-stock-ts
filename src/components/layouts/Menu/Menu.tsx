@@ -117,8 +117,8 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
       <DrawerHeader>
         <Stack direction="row" alignItems="center">
           <img
-            src={`${process.env.PUBLIC_URL}/images/cm_logo.png`}
-            style={{ height: 30 }}
+            src={`${process.env.PUBLIC_URL}/images/123film.png`}
+            style={{ height: 40, width: 200 }}
           />
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (

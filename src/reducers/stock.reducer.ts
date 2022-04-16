@@ -6,11 +6,12 @@ import {
   STOCK_FETCHING,
   STOCK_SUCCESS,
 } from "../Constants";
+import { Product } from "../types/product.type";
 
 export interface StockState {
   isFetching: boolean;
   isError: boolean;
-  result: any[];
+  result: Product[];
 }
 const initialState: StockState = {
   isFetching: false,

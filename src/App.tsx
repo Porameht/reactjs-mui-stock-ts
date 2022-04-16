@@ -33,7 +33,7 @@ import {
   styled,
   useTheme,
 } from "@mui/material/styles";
-import { blue, blueGrey, purple, red } from "@mui/material/colors";
+import { blue, blueGrey, purple, red, yellow } from "@mui/material/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { RootReducers } from "./reducers";
 import * as loginActions from "./actions/login.action";
@@ -84,7 +84,7 @@ const theme = createTheme({
   },
   spacing: 8,
   palette: {
-    primary: red,
+    primary: blue,
     background: {
       default: "#CFD2D6",
     },

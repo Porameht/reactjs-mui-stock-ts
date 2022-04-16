@@ -13,8 +13,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootReducers } from "../../../reducers";
 import {
   Box,
+  Button,
+  createTheme,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Fab,
   IconButton,
+  Slide,
   Stack,
   TextField,
   Typography,
@@ -22,109 +30,19 @@ import {
 import NumberFormat from "react-number-format";
 import Moment from "react-moment";
 import { Add, Clear, Search } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDebounce, useDebounceCallback } from "@react-hook/debounce";
-
-const stockColumns: GridColDef[] = [
-  {
-    headerName: "ID",
-    field: "id",
-    width: 50,
-  },
-  {
-    headerName: "IMG",
-    field: "image",
-    width: 80,
-    renderCell: ({ value }: GridRenderCellParams<string>) => (
-      <img
-        src={`${imageUrl}/images/${value}?dummy=${Math.random()}`}
-        style={{ width: 70, height: 70, borderRadius: "10%" }}
-      />
-    ),
-  },
-  {
-    headerName: "NAME",
-    field: "name",
-    width: 400,
-  },
-  {
-    headerName: "STOCK",
-    width: 120,
-    field: "stock",
-    renderCell: ({ value }: GridRenderCellParams<string>) => (
-      <Typography variant="body1">
-        <NumberFormat
-          value={value}
-          displayType={"text"}
-          thousandSeparator={true}
-          decimalScale={0}
-          fixedDecimalScale={true}
-        />
-      </Typography>
-    ),
-  },
-  {
-    headerName: "PRICE",
-    field: "price",
-    width: 120,
-    renderCell: ({ value }: GridRenderCellParams<string>) => (
-      <Typography variant="body1">
-        <NumberFormat
-          value={value}
-          displayType={"text"}
-          thousandSeparator={true}
-          decimalScale={2}
-          fixedDecimalScale={true}
-          prefix={"฿"}
-        />
-      </Typography>
-    ),
-  },
-  {
-    headerName: "TIME",
-    field: "createdAt",
-    width: 220,
-    renderCell: ({ value }: GridRenderCellParams<string>) => (
-      <Typography variant="body1">
-        <Moment format="DD/MM/YYYY HH:mm">{value}</Moment>
-      </Typography>
-    ),
-  },
-  {
-    headerName: "ACTION",
-    field: ".",
-    width: 120,
-    renderCell: ({ row }: GridRenderCellParams<string>) => (
-      <Stack direction="row">
-        <IconButton
-          aria-label="edit"
-          size="large"
-          onClick={() => {
-            // navigator("/stock/edit/" + row.id);
-          }}
-        >
-          <EditIcon fontSize="inherit" />
-        </IconButton>
-        <IconButton
-          aria-label="delete"
-          size="large"
-          onClick={() => {
-            // setSelectedProduct(row);
-            // setOpenDialog(true);
-          }}
-        >
-          <DeleteIcon fontSize="inherit" />
-        </IconButton>
-      </Stack>
-    ),
-  },
-];
+import shadows from "@mui/material/styles/shadows";
+import Paper from "@mui/material/Paper";
+import { TransitionProps } from "@mui/material/transitions";
+import { Product } from "../../../types/product.type";
 
 interface QuickSearchToolbarProps {
   clearSearch: () => void;
   onChange: () => void;
   value: string;
 }
+
 function QuickSearchToolbar(props: QuickSearchToolbarProps) {
   return (
     <Box
@@ -179,13 +97,18 @@ function QuickSearchToolbar(props: QuickSearchToolbarProps) {
     </Box>
   );
 }
+
 export default function StockPage() {
   const stockReducer = useSelector((state: RootReducers) => state.stockReducer);
   const dispatch = useDispatch();
   const [keywordSearch, setKeywordSearch] = useDebounce<string>("", 1000);
   const [keywordSearchNoDelay, setKeywordSearchNoDelay] =
     React.useState<string>("");
-
+  const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(
+    null
+  );
+  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+  const navigate = useNavigate();
   React.useEffect(() => {
     dispatch(stockActions.loadStockByKeyword(keywordSearch));
   }, [keywordSearch]);
@@ -193,6 +116,148 @@ export default function StockPage() {
   React.useEffect(() => {
     dispatch(stockActions.loadStock());
   }, []);
+
+  const stockColumns: GridColDef[] = [
+    {
+      headerName: "ID",
+      field: "id",
+      width: 50,
+    },
+    {
+      headerName: "IMG",
+      field: "image",
+      width: 80,
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+        <img
+          src={`${imageUrl}/images/${value}?dummy=${Math.random()}`}
+          style={{ width: 70, height: 70, borderRadius: "10%" }}
+        />
+      ),
+    },
+    {
+      headerName: "NAME",
+      field: "name",
+      width: 400,
+    },
+    {
+      headerName: "STOCK",
+      width: 120,
+      field: "stock",
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+        <Typography variant="body1">
+          <NumberFormat
+            value={value}
+            displayType={"text"}
+            thousandSeparator={true}
+            decimalScale={0}
+            fixedDecimalScale={true}
+          />
+        </Typography>
+      ),
+    },
+    {
+      headerName: "PRICE",
+      field: "price",
+      width: 120,
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+        <Typography variant="body1">
+          <NumberFormat
+            value={value}
+            displayType={"text"}
+            thousandSeparator={true}
+            decimalScale={2}
+            fixedDecimalScale={true}
+            prefix={"฿"}
+          />
+        </Typography>
+      ),
+    },
+    {
+      headerName: "TIME",
+      field: "createdAt",
+      width: 220,
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+        <Typography variant="body1">
+          <Moment format="DD/MM/YYYY HH:mm">{value}</Moment>
+        </Typography>
+      ),
+    },
+    {
+      headerName: "ACTION",
+      field: ".",
+      width: 120,
+      renderCell: ({ row }: GridRenderCellParams<string>) => (
+        <Stack direction="row">
+          <IconButton
+            aria-label="edit"
+            size="large"
+            onClick={() => {
+              navigate("/stock/edit/" + row.id);
+            }}
+          >
+            <EditIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton
+            aria-label="delete"
+            size="large"
+            onClick={() => {
+              // alert(JSON.stringify(row));
+              setSelectedProduct(row);
+              setOpenDialog(true);
+            }}
+          >
+            <DeleteIcon fontSize="inherit" />
+          </IconButton>
+        </Stack>
+      ),
+    },
+  ];
+
+  // redux
+  const handleDeleteConfirm = () => {
+    dispatch(stockActions.deleteProduct(String(selectedProduct!.id!)));
+    setOpenDialog(false);
+  };
+
+  // dialog delete
+  const showDialog = () => {
+    if (selectedProduct === null) {
+      return "";
+    }
+
+    return (
+      <Dialog
+        open={openDialog}
+        keepMounted
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">
+          <img
+            src={`${imageUrl}/images/${
+              selectedProduct.image
+            }?dummy=${Math.random()}`}
+            style={{ width: 100, borderRadius: "5%" }}
+          />
+          <br />
+          Confirm to delete the product? : {selectedProduct.name}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            You cannot restore deleted product.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="info">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="primary">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
 
   return (
     <Box>
@@ -211,13 +276,19 @@ export default function StockPage() {
             },
           },
         }}
-        sx={{ backgroundColor: "white", height: "70vh" }}
+        sx={{
+          backgroundColor: "white",
+          height: "85vh",
+          borderRadius: "10px",
+          boxShadow: "0 1px 10px 0 #00B0CD",
+        }}
         rows={stockReducer.result}
         columns={stockColumns}
         pageSize={10}
         rowsPerPageOptions={[5]}
         // checkboxSelection
       />
+      {showDialog()}
     </Box>
   );
 }
