@@ -8,6 +8,7 @@ import {
 } from "../Constants";
 import { Product } from "../types/product.type";
 import { httpClient } from "../utils/httpclient";
+import { history } from "..";
 
 export const setStockFetchingToState = () => ({
   type: STOCK_EDIT_FETCHING,

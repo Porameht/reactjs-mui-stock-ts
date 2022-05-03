@@ -9,10 +9,12 @@ import {
 import { FormikProps, Form, Field, Formik } from "formik";
 import { TextField } from "formik-material-ui";
 import * as React from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useMatch, useNavigate } from "react-router-dom";
+import { imageUrl } from "../../../Constants";
+import { RootReducers } from "../../../reducers";
 import { Product } from "../../../types/product.type";
-import * as stockActions from "./../../../actions/stock.action";
+import * as stockEditActions from "./../../../actions/stock.edit.action";
 
 type StockEditPageProps = {
   //
@@ -20,15 +22,26 @@ type StockEditPageProps = {
 
 const StockEditPage: React.FC<any> = () => {
   const dispatch = useDispatch();
-  
+  const stockEditReducer = useSelector(
+    (state: RootReducers) => state.stockEditReducer
+  );
+  const match = useMatch("/stock/edit/:id");
+
   React.useEffect(() => {
-   
-  }, [])
-  
+    let id = match?.params.id;
+    dispatch(stockEditActions.getProductById(id));
+  }, []);
 
   const showPreviewImage = (values: any) => {
     if (values.file_obj) {
       return <img src={values.file_obj} style={{ height: 100 }} />;
+    } else if (values.image) {
+      return (
+        <img
+          src={`${imageUrl}/images/${values.image}`}
+          style={{ height: 100 }}
+        />
+      );
     }
   };
 
@@ -119,7 +132,7 @@ const StockEditPage: React.FC<any> = () => {
               Edit
             </Button>
             <Button component={Link} to="/stock" variant="outlined" fullWidth>
-              Cancl
+              Cancle
             </Button>
           </CardActions>
         </Card>
@@ -127,8 +140,7 @@ const StockEditPage: React.FC<any> = () => {
     );
   };
 
-  const initialValues: Product = { name: "", stock: 2000, price: 3000 };
-
+  const initialValues: Product = { name: "Loading...", stock: 0, price: 0 };
   return (
     <Box>
       <Formik
@@ -140,15 +152,23 @@ const StockEditPage: React.FC<any> = () => {
             errors.price = "Min price is not lower than 10";
           return errors;
         }}
-        initialValues={initialValues}
+        enableReinitialize
+        initialValues={
+          stockEditReducer.result ? stockEditReducer.result : initialValues
+        }
         onSubmit={(values, { setSubmitting }) => {
           // alert(JSON.stringify(values));
           let formData = new FormData();
+          formData.append("id", String(values.id));
           formData.append("name", values.name);
           formData.append("price", String(values.price));
           formData.append("stock", String(values.stock));
-          formData.append("image", values.file);
-          dispatch(stockActions.addProduct(formData));
+
+          if (values.file) {
+            formData.append("image", values.file);
+          }
+
+          dispatch(stockEditActions.updateProduct(formData));
           setSubmitting(false);
         }}
       >
