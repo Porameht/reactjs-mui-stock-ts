@@ -1,4 +1,12 @@
-# Getting Started with Create React App
+# App Preview Production Mode
+
+## Stock Page
+![Screen Shot 2565-05-04 at 12 07 37](https://user-images.githubusercontent.com/89307294/166626122-9d7de0e4-0995-4294-8b71-96668b7ecec6.png)
+
+## Report Page
+![Screen Shot 2565-05-04 at 12 07 41](https://user-images.githubusercontent.com/89307294/166626131-61c4fbcf-dcec-49a7-81a1-165eec067251.png)
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
