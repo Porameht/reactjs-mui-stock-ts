@@ -26,16 +26,26 @@ import {
   Stack,
   TextField,
   Typography,
+  Grid,
 } from "@mui/material";
 import NumberFormat from "react-number-format";
 import Moment from "react-moment";
-import { Add, Clear, Search } from "@mui/icons-material";
+import {
+  Add,
+  AddShoppingCart,
+  AssignmentReturn,
+  Clear,
+  NewReleases,
+  Search,
+  Star,
+} from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useDebounce, useDebounceCallback } from "@react-hook/debounce";
 import shadows from "@mui/material/styles/shadows";
 import Paper from "@mui/material/Paper";
 import { TransitionProps } from "@mui/material/transitions";
 import { Product } from "../../../types/product.type";
+import StockCard from "../../layouts/StockCard";
 
 interface QuickSearchToolbarProps {
   clearSearch: () => void;
@@ -261,6 +271,44 @@ export default function StockPage() {
 
   return (
     <Box>
+      {/* Summary Icons */}
+      <Grid container style={{ marginBottom: 16 }} spacing={7}>
+        <Grid item lg={3} md={6}>
+          <StockCard
+            icon={AddShoppingCart}
+            title="TOTAL"
+            subtitle="112 THB"
+            color="#00a65a"
+          />
+        </Grid>
+
+        <Grid item lg={3} md={6}>
+          <StockCard
+            icon={NewReleases}
+            title="EMPTY"
+            subtitle="9 PCS."
+            color="#f39c12"
+          />
+        </Grid>
+
+        <Grid item lg={3} md={6}>
+          <StockCard
+            icon={AssignmentReturn}
+            title="RETURN"
+            subtitle="1 PCS."
+            color="#dd4b39"
+          />
+        </Grid>
+
+        <Grid item lg={3} md={6}>
+          <StockCard
+            icon={Star}
+            title="LOSS"
+            subtitle="5 PCS."
+            color="#00c0ef"
+          />
+        </Grid>
+      </Grid>
       <DataGrid
         components={{ Toolbar: QuickSearchToolbar }}
         componentsProps={{
@@ -278,7 +326,7 @@ export default function StockPage() {
         }}
         sx={{
           backgroundColor: "white",
-          height: "85vh",
+          height: "70vh",
           borderRadius: "10px",
           boxShadow: "0 1px 10px 0 #00B0CD",
         }}

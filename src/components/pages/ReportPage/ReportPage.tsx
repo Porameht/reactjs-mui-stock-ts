@@ -111,7 +111,7 @@ export default () => {
   }, []);
 
   return (
-    <Paper sx={{ padding: 4, width: "100w" }}>
+    <Paper sx={{ padding: 4 }}>
       <Typography variant="h3">Sales Chart</Typography>
       <ButtonGroup
         size="large"

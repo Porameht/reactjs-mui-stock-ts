@@ -1,22 +1,9 @@
 import * as React from "react";
 
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+
 import Header from "./components/layouts/Header";
 import Menu from "./components/layouts/Menu";
 import { Link, Navigate, Route, Routes } from "react-router-dom";
@@ -84,7 +71,7 @@ const theme = createTheme({
   },
   spacing: 8,
   palette: {
-    primary: blue,
+    primary: process.env.REACT_APP_IS_PRODUCTION == "1" ? blue : blueGrey,
     background: {
       default: "#CFD2D6",
     },
@@ -149,13 +136,22 @@ export default function App() {
           <Menu open={open} onDrawerClose={handleDrawerClose} />
         )}
 
-        <Main open={open}>
+        <Main
+          open={open}
+          sx={{
+            backgroundImage:
+              "url(" + `${process.env.PUBLIC_URL}/images/background.jpg` + ")",
+            height: "100vh",
+          }}
+        >
           <DrawerHeader />
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<PublicRoutes />}>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/" element={<Navigate to="/login" />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
             {/* Protected routes */}
             <Route path="/" element={<ProtectedRoutes />}>
@@ -164,8 +160,6 @@ export default function App() {
               <Route path="/stock/edit/:id" element={<StockEditPage />} />
               <Route path="/report" element={<ReportPage />} />
               <Route path="/aboutus" element={<AboutUs />} />
-              <Route path="/" element={<Navigate to="/login" />} />
-              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </Main>
